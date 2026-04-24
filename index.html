@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Controle de NFs em Atraso</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, select, textarea { margin: 5px; padding: 8px; width: 300px; }
+    button { padding: 10px; cursor: pointer; }
+    table { border-collapse: collapse; margin-top: 20px; }
+    td, th { border: 1px solid #ccc; padding: 8px; }
+  </style>
+</head>
+<body>
+
+<h2>Atualização de NF</h2>
+
+<input id="nf" placeholder="Número da NF"><br>
+<input id="transportadora" placeholder="Transportadora"><br>
+
+<select id="status">
+  <option>Em atraso</option>
+  <option>Em rota</option>
+  <option>Entregue</option>
+</select><br>
+
+<textarea id="resposta" placeholder="Resposta da transportadora"></textarea><br>
+
+<button onclick="enviar()">Enviar</button>
+
+<h2>Respostas registradas</h2>
+<table id="tabela"></table>
+
+<script>
+const URL = "COLE_AQUI_SUA_URL_DO_SCRIPT";
+
+function enviar() {
+  const dados = {
+    nf: document.getElementById("nf").value,
+    transportadora: document.getElementById("transportadora").value,
+    status: document.getElementById("status").value,
+    resposta: document.getElementById("resposta").value
+  };
+
+  fetch(URL, {
+    method: "POST",
+    body: JSON.stringify(dados)
+  }).then(() => {
+    alert("Enviado com sucesso!");
+    carregar();
+  });
+}
+
+function carregar() {
+  fetch(URL)
+    .then(res => res.json())
+    .then(data => {
+      let tabela = "<tr><th>NF</th><th>Transportadora</th><th>Status</th><th>Resposta</th><th>Data</th></tr>";
+
+      data.slice(1).forEach(linha => {
+        tabela += "<tr>";
+        linha.forEach(celula => {
+          tabela += `<td>${celula}</td>`;
+        });
+        tabela += "</tr>";
+      });
+
+      document.getElementById("tabela").innerHTML = tabela;
+    });
+}
+
+carregar();
+</script>
+
+</body>
+</html>
